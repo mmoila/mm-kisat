@@ -17,6 +17,8 @@
       --red: #e63946;
       --blue: #1d6fce;
       --accent: #1d6fce;
+      --live: #22c55e;
+      --warn: #f59e0b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,19 +40,14 @@
       padding: 0;
     }
 
-    /* diagonal stripe accents */
     header::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        repeating-linear-gradient(
-          -55deg,
-          transparent,
-          transparent 40px,
-          rgba(255,255,255,0.015) 40px,
-          rgba(255,255,255,0.015) 41px
-        );
+      background: repeating-linear-gradient(
+        -55deg, transparent, transparent 40px,
+        rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px
+      );
       pointer-events: none;
     }
 
@@ -64,58 +61,38 @@
       flex-wrap: wrap;
     }
 
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .header-left { display: flex; flex-direction: column; gap: 4px; }
 
     .header-eyebrow {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--red);
     }
 
     .header-title {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      line-height: 1;
+      font-size: 2rem; font-weight: 900;
+      letter-spacing: -0.02em; line-height: 1;
       background: linear-gradient(90deg, #ffffff 0%, #c8d8f0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .header-sub {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+    .header-sub { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
 
-    /* kick scene */
     .header-kick {
-      display: flex;
-      align-items: flex-end;
-      gap: 0;
-      line-height: 1;
-      flex-shrink: 0;
+      display: flex; align-items: flex-end;
+      gap: 0; line-height: 1; flex-shrink: 0;
     }
 
     .kick-player {
-      font-size: 3.2rem;
-      display: block;
+      font-size: 3.2rem; display: block;
       transform: scaleX(-1);
       filter: drop-shadow(0 0 12px rgba(230,57,70,0.5));
     }
 
     .kick-ball {
-      font-size: 1.1rem;
-      display: block;
-      margin-bottom: 6px;
-      margin-left: -2px;
+      font-size: 1.1rem; display: block;
+      margin-bottom: 6px; margin-left: -2px;
       animation: ballroll 2.5s ease-in-out infinite;
     }
 
@@ -124,29 +101,16 @@
       50%       { transform: translateY(-4px) rotate(20deg); }
     }
 
-    /* right side of header */
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    .header-right { display: flex; align-items: center; gap: 20px; }
 
     .refresh-btn {
       background: linear-gradient(135deg, var(--red), #c1121f);
-      color: white;
-      border: none;
-      padding: 11px 22px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.88rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      color: white; border: none;
+      padding: 11px 22px; border-radius: 6px;
+      cursor: pointer; font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
       transition: opacity 0.2s, transform 0.1s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
+      display: flex; align-items: center; gap: 8px; white-space: nowrap;
     }
 
     .refresh-btn:hover { opacity: 0.88; transform: translateY(-1px); }
@@ -156,161 +120,251 @@
     .spinner {
       width: 13px; height: 13px;
       border: 2px solid rgba(255,255,255,0.35);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
     }
 
     .loading .spinner { display: block; }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── ERROR ── */
+    /* ── BANNERS ── */
     .error-banner {
       background: rgba(230,57,70,0.12);
       border-bottom: 1px solid rgba(230,57,70,0.3);
-      color: #fca5a5;
-      padding: 10px 20px;
-      font-size: 0.83rem;
-      text-align: center;
+      color: #fca5a5; padding: 10px 20px;
+      font-size: 0.83rem; text-align: center; display: none;
+    }
+    .error-banner.visible { display: block; }
+
+    .pending-banner {
+      background: rgba(245,158,11,0.1);
+      border-bottom: 1px solid rgba(245,158,11,0.25);
+      color: #fcd34d;
+      padding: 12px 24px;
+      font-size: 0.85rem;
       display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .error-banner.visible { display: block; }
+    .pending-banner.visible { display: flex; }
+
+    .pending-matches { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .pending-match-tag {
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .pending-dismiss {
+      background: none; border: none; color: #fcd34d;
+      cursor: pointer; font-size: 1.1rem; line-height: 1;
+      opacity: 0.7; flex-shrink: 0;
+    }
+    .pending-dismiss:hover { opacity: 1; }
 
     /* ── MAIN ── */
     main {
       max-width: 1200px;
       margin: 0 auto;
       padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
     }
 
     /* ── PODIUM ── */
     .podium {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 32px;
-      justify-content: center;
-      flex-wrap: wrap;
+      display: flex; gap: 14px;
+      justify-content: center; flex-wrap: wrap;
     }
 
     .podium-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px 28px;
-      text-align: center;
-      min-width: 150px;
-      flex: 1;
-      max-width: 210px;
-      position: relative;
-      overflow: hidden;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px 28px;
+      text-align: center; min-width: 150px;
+      flex: 1; max-width: 210px;
+      position: relative; overflow: hidden;
     }
 
     .podium-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
     }
 
     .podium-card.rank-1::before { background: linear-gradient(90deg, #b8860b, var(--gold), #b8860b); }
     .podium-card.rank-2::before { background: linear-gradient(90deg, #888, var(--silver), #888); }
     .podium-card.rank-3::before { background: linear-gradient(90deg, #7c5018, var(--bronze), #7c5018); }
-
     .podium-card.rank-1 { border-color: rgba(255,215,0,0.2); }
     .podium-card.rank-2 { border-color: rgba(192,192,192,0.15); }
     .podium-card.rank-3 { border-color: rgba(205,127,50,0.15); }
 
     .podium-medal { font-size: 1.9rem; margin-bottom: 8px; }
     .podium-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
-
-    .podium-points {
-      font-size: 1.7rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
-
+    .podium-points { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.02em; }
     .podium-card.rank-1 .podium-points { color: var(--gold); }
     .podium-card.rank-2 .podium-points { color: var(--silver); }
     .podium-card.rank-3 .podium-points { color: var(--bronze); }
-
     .podium-points-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
     .podium-rank { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
 
-    /* ── TABLE ── */
-    .table-card {
+    /* ── MATCHES ── */
+    .matches-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
     }
 
-    .table-header {
+    .matches-card-header {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--muted);
+      display: flex; align-items: center; gap: 10px;
     }
 
-    .table-wrap { overflow-x: auto; }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--live);
+      box-shadow: 0 0 6px var(--live);
+      animation: pulse 1.4s ease-in-out infinite;
+      display: none;
+    }
 
-    table { width: 100%; border-collapse: collapse; }
+    .live-dot.visible { display: block; }
 
-    thead th {
-      background: rgba(255,255,255,0.02);
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      padding: 11px 16px;
-      text-align: right;
-      white-space: nowrap;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .day-group { border-bottom: 1px solid var(--border); }
+    .day-group:last-child { border-bottom: none; }
+
+    .day-label {
+      padding: 10px 24px 8px;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(29,111,206,0.05);
       border-bottom: 1px solid var(--border);
     }
 
-    thead th:first-child,
-    thead th:nth-child(2),
-    thead th:nth-child(3) { text-align: left; }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
+    .match-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto 1fr 80px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(30,42,58,0.6);
       transition: background 0.12s;
     }
 
+    .match-row:last-child { border-bottom: none; }
+    .match-row:hover { background: rgba(255,255,255,0.02); }
+
+    .match-time {
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--muted); text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .match-team {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.88rem; font-weight: 600;
+      overflow: hidden;
+    }
+
+    .match-team.away { flex-direction: row-reverse; text-align: right; }
+
+    .team-flag { font-size: 1.2rem; flex-shrink: 0; }
+
+    .team-name {
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .match-score {
+      text-align: center;
+      font-size: 1rem; font-weight: 900;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+
+    .score-live { color: var(--live); }
+    .score-final { color: var(--text); }
+    .score-upcoming { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+
+    .match-status-badge {
+      text-align: center;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .status-pre  { color: var(--muted); background: rgba(107,114,128,0.1); }
+    .status-in   { color: var(--live);  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); }
+    .status-post { color: #64748b;      background: rgba(100,116,139,0.08); }
+
+    .matches-loading {
+      padding: 24px; text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+
+    /* ── STANDINGS TABLE ── */
+    .table-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+
+    .table-header {
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      background: rgba(255,255,255,0.02); color: var(--muted);
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      padding: 11px 16px; text-align: right; white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th:first-child, thead th:nth-child(2), thead th:nth-child(3) { text-align: left; }
+
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: rgba(255,255,255,0.025); }
     tbody tr.empty-slot { opacity: 0.25; }
 
-    /* red left-border for top 3 */
     tbody tr.rank-1 td:first-child { border-left: 3px solid var(--gold); }
     tbody tr.rank-2 td:first-child { border-left: 3px solid var(--silver); }
     tbody tr.rank-3 td:first-child { border-left: 3px solid var(--bronze); }
 
     td {
-      padding: 13px 16px;
-      font-size: 0.88rem;
-      text-align: right;
-      white-space: nowrap;
+      padding: 13px 16px; font-size: 0.88rem;
+      text-align: right; white-space: nowrap;
     }
 
-    td:first-child,
-    td:nth-child(2),
-    td:nth-child(3) { text-align: left; }
+    td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
 
     .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      font-size: 0.78rem;
-      font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%;
+      font-size: 0.78rem; font-weight: 800;
     }
 
     .rank-1 .rank-badge { background: rgba(255,215,0,0.12); color: var(--gold); }
@@ -321,19 +375,27 @@
     .total-cell { font-weight: 800; color: #60a5fa; }
     .zero { color: #2d3748; }
 
-    .last-updated {
-      text-align: right;
-      font-size: 0.76rem;
-      color: #374151;
-      margin-top: 14px;
+    /* ── FOOTER ── */
+    .footer-info {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+      font-size: 0.76rem; color: #374151;
     }
 
-    @media (max-width: 600px) {
+    .next-refresh { color: #4b5563; }
+
+    @media (max-width: 700px) {
       .header-inner { padding: 16px; }
       .header-title { font-size: 1.4rem; }
       .kick-player { font-size: 2.2rem; }
-      main { padding: 16px 12px; }
+      main { padding: 16px 12px; gap: 20px; }
       .podium-card { min-width: 110px; padding: 14px; }
+      .match-row {
+        grid-template-columns: 44px 1fr auto 1fr 64px;
+        gap: 8px; padding: 10px 14px;
+      }
+      .team-name { font-size: 0.8rem; }
+      .day-label { padding: 8px 14px; }
     }
   </style>
 </head>
@@ -351,7 +413,7 @@
         <span class="kick-player">🏃</span>
         <span class="kick-ball">⚽</span>
       </div>
-      <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+      <button class="refresh-btn" id="refreshBtn" onclick="refreshAll()">
         <span class="spinner" id="spinner"></span>
         Päivitä
       </button>
@@ -361,8 +423,25 @@
 
 <div class="error-banner" id="errorBanner"></div>
 
+<div class="pending-banner" id="pendingBanner">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span>⚠️ Päättyneiden otteluiden tulokset odottavat päivittämistä:</span>
+    <div class="pending-matches" id="pendingMatches"></div>
+  </div>
+  <button class="pending-dismiss" onclick="dismissPending()" title="Sulje">✕</button>
+</div>
+
 <main>
   <div class="podium" id="podium"></div>
+
+  <div class="matches-card">
+    <div class="matches-card-header">
+      <span class="live-dot" id="liveDot"></span>
+      Ottelut
+    </div>
+    <div id="matchesList"><div class="matches-loading">Ladataan otteluita...</div></div>
+  </div>
+
   <div class="table-card">
     <div class="table-header">Kaikki osallistujat</div>
     <div class="table-wrap">
@@ -372,12 +451,61 @@
       </table>
     </div>
   </div>
-  <div class="last-updated" id="lastUpdated"></div>
+
+  <div class="footer-info">
+    <span id="lastUpdated"></span>
+    <span class="next-refresh" id="nextRefresh"></span>
+  </div>
 </main>
 
 <script>
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRM37jNS4oQUGxxYaXiAMJcKxVI0x6O-iDIL4_SBkmoNIIbFKIaVVCWqB6pvvrXrU3vhvaIfKD7JW5V/pub?gid=0&single=true&output=csv';
+  const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
   const MEDALS = ['🥇', '🥈', '🥉'];
+  const REFRESH_MS = 15 * 60 * 1000;
+
+  // ISO alpha-2 → flag emoji
+  function flag(alpha2) {
+    if (!alpha2 || alpha2.length !== 2) return '';
+    return [...alpha2.toUpperCase()].map(c =>
+      String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)
+    ).join('');
+  }
+
+  // ESPN uses alpha-3 abbreviations; map to alpha-2 for flags
+  const ALPHA3_TO_2 = {
+    AFG:'AF',ALB:'AL',ALG:'DZ',AND:'AD',ANG:'AO',ARG:'AR',ARM:'AM',AUS:'AU',AUT:'AT',
+    AZE:'AZ',BEL:'BE',BEN:'BJ',BOL:'BO',BIH:'BA',BOT:'BW',BRA:'BR',BUL:'BG',BFA:'BF',
+    BDI:'BI',CMR:'CM',CAN:'CA',CPV:'CV',CAF:'CF',CHA:'TD',CHI:'CL',CHN:'CN',COL:'CO',
+    COM:'KM',CGO:'CG',COD:'CD',CRC:'CR',CRO:'HR',CUB:'CU',CYP:'CY',CZE:'CZ',DEN:'DK',
+    DJI:'DJ',DOM:'DO',ECU:'EC',EGY:'EG',SLV:'SV',ENG:'GB',EQG:'GQ',ERI:'ER',EST:'EE',
+    ETH:'ET',FIJ:'FJ',FIN:'FI',FRA:'FR',GAB:'GA',GAM:'GM',GEO:'GE',GER:'DE',GHA:'GH',
+    GRE:'GR',GTM:'GT',GUI:'GN',GNB:'GW',GUY:'GY',HAI:'HT',HON:'HN',HKG:'HK',HUN:'HU',
+    ISL:'IS',IND:'IN',IDN:'ID',IRN:'IR',IRQ:'IQ',IRL:'IE',ISR:'IL',ITA:'IT',CIV:'CI',
+    JAM:'JM',JPN:'JP',JOR:'JO',KAZ:'KZ',KEN:'KE',PRK:'KP',KOR:'KR',KUW:'KW',KGZ:'KG',
+    LAO:'LA',LVA:'LV',LBN:'LB',LES:'LS',LBR:'LR',LBA:'LY',LIE:'LI',LTU:'LT',LUX:'LU',
+    MAC:'MO',MKD:'MK',MAD:'MG',MWI:'MW',MAS:'MY',MDV:'MV',MLI:'ML',MLT:'MT',MTN:'MR',
+    MUS:'MU',MEX:'MX',MDA:'MD',MON:'MC',MNG:'MN',MNE:'ME',MAR:'MA',MOZ:'MZ',MYA:'MM',
+    NAM:'NA',NEP:'NP',NED:'NL',NZL:'NZ',NCA:'NI',NIG:'NE',NGA:'NG',NOR:'NO',OMA:'OM',
+    PAK:'PK',PAN:'PA',PNG:'PG',PAR:'PY',PER:'PE',PHI:'PH',POL:'PL',POR:'PT',PUR:'PR',
+    QAT:'QA',ROU:'RO',RUS:'RU',RWA:'RW',SAU:'SA',SCO:'GB',SEN:'SN',SRB:'RS',SLE:'SL',
+    SVK:'SK',SVN:'SI',SOM:'SO',RSA:'ZA',ESP:'ES',LKA:'LK',SDN:'SD',SWZ:'SZ',SWE:'SE',
+    SUI:'CH',SYR:'SY',TWN:'TW',TJK:'TJ',TAN:'TZ',THA:'TH',TLS:'TL',TOG:'TG',TRI:'TT',
+    TUN:'TN',TUR:'TR',TKM:'TM',UGA:'UG',UKR:'UA',UAE:'AE',USA:'US',URU:'UY',UZB:'UZ',
+    VEN:'VE',VIE:'VN',WAL:'GB',YEM:'YE',ZAM:'ZM',ZIM:'ZW'
+  };
+
+  function teamFlag(abbr) {
+    if (!abbr) return '';
+    const a2 = ALPHA3_TO_2[abbr.toUpperCase()];
+    // Special flags for home nations
+    if (abbr === 'ENG') return '🏴󠁧󠁢󠁥󠁮󠁧󠁿';
+    if (abbr === 'SCO') return '🏴󠁧󠁢󠁳󠁣󠁴󠁿';
+    if (abbr === 'WAL') return '🏴󠁧󠁢󠁷󠁬󠁳󠁿';
+    return a2 ? flag(a2) : '';
+  }
+
+  // ── CSV / STANDINGS ─────────────────────────────────────────────
 
   function parseCSV(text) {
     const lines = text.trim().split('\n');
@@ -391,11 +519,8 @@
         if (ch === '"') {
           if (inQ && line[i+1] === '"') { cur += '"'; i++; }
           else inQ = !inQ;
-        } else if (ch === ',' && !inQ) {
-          cells.push(cur.trim()); cur = '';
-        } else {
-          cur += ch;
-        }
+        } else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; }
+        else cur += ch;
       }
       cells.push(cur.trim());
       return cells;
@@ -420,19 +545,16 @@
     return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function render(data) {
+  function renderStandings(data) {
     const { headers, rows } = data;
-    const activeRows = rows.filter(r => r['Name'] && r['Name'] !== 'X' && r['Name'] !== '');
-    const emptyRows  = rows.filter(r => !r['Name'] || r['Name'] === 'X' || r['Name'] === '');
-
-    const sorted = [...activeRows].sort((a, b) => {
-      const ra = parseInt(a['Rank']) || 99;
-      const rb = parseInt(b['Rank']) || 99;
+    const active = rows.filter(r => r['Name'] && r['Name'] !== 'X' && r['Name'] !== '');
+    const empty  = rows.filter(r => !r['Name'] || r['Name'] === 'X' || r['Name'] === '');
+    const sorted = [...active].sort((a, b) => {
+      const ra = parseInt(a['Rank']) || 99, rb = parseInt(b['Rank']) || 99;
       if (ra !== rb) return ra - rb;
       return toNum(b['Total']) - toNum(a['Total']);
     });
 
-    // Podium
     const podium = document.getElementById('podium');
     podium.innerHTML = '';
     sorted.slice(0, 3).forEach((row, i) => {
@@ -449,14 +571,13 @@
       podium.appendChild(card);
     });
 
-    // Table
     const showHeaders = headers.filter(h => h !== 'Sheet' && h !== '');
     document.getElementById('tableHead').innerHTML =
       '<tr>' + showHeaders.map(h => `<th>${esc(h)}</th>`).join('') + '</tr>';
 
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
-    [...sorted, ...emptyRows].forEach(row => {
+    [...sorted, ...empty].forEach(row => {
       const rank = parseInt(row['Rank']) || 99;
       const isEmpty = !row['Name'] || row['Name'] === 'X' || row['Name'] === '';
       const tr = document.createElement('tr');
@@ -471,8 +592,166 @@
       tbody.appendChild(tr);
     });
 
-    document.getElementById('subtitle').textContent = `${activeRows.length} osallistujaa`;
+    document.getElementById('subtitle').textContent = `${active.length} osallistujaa`;
   }
+
+  // ── MATCHES ────────────────────────────────────────────────────
+
+  function dateStr(offset) {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().slice(0,10).replace(/-/g,'');
+  }
+
+  function dayLabel(offset) {
+    if (offset === -1) return 'Eilen';
+    if (offset ===  0) return 'Tänään';
+    if (offset ===  1) return 'Huomenna';
+    const d = new Date(); d.setDate(d.getDate() + offset);
+    return d.toLocaleDateString('fi-FI', { weekday:'long', day:'numeric', month:'numeric' });
+  }
+
+  function formatKickoff(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('fi-FI', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function renderMatches(eventsByDay) {
+    const list = document.getElementById('matchesList');
+    const allEvents = eventsByDay.flat();
+    const hasLive = allEvents.some(e => e?.status?.type?.state === 'in');
+    document.getElementById('liveDot').classList.toggle('visible', hasLive);
+
+    if (allEvents.length === 0) {
+      list.innerHTML = '<div class="matches-loading">Ei otteluja näytettävänä</div>';
+      return;
+    }
+
+    // collect completed matches for pending banner
+    const completed = [];
+
+    list.innerHTML = '';
+    eventsByDay.forEach((events, i) => {
+      if (!events || events.length === 0) return;
+      const offset = i - 1; // -1, 0, 1, 2
+
+      const group = document.createElement('div');
+      group.className = 'day-group';
+
+      const dateEl = document.createElement('div');
+      dateEl.className = 'day-label';
+      const dayD = new Date(); dayD.setDate(dayD.getDate() + offset);
+      const dateFormatted = dayD.toLocaleDateString('fi-FI', { day:'numeric', month:'numeric' });
+      dateEl.textContent = `${dayLabel(offset)} ${offset !== 0 ? dateFormatted : ''}`.trim();
+      group.appendChild(dateEl);
+
+      events.forEach(event => {
+        const comp = event.competitions?.[0];
+        if (!comp) return;
+
+        const state = event.status?.type?.state ?? 'pre';
+        const completed_flag = event.status?.type?.completed;
+        const detail = event.status?.type?.shortDetail ?? '';
+        const home = comp.competitors?.find(c => c.homeAway === 'home');
+        const away = comp.competitors?.find(c => c.homeAway === 'away');
+        if (!home || !away) return;
+
+        const homeAbbr = home.team?.abbreviation ?? '';
+        const awayAbbr = away.team?.abbreviation ?? '';
+        const homeName = home.team?.displayName ?? homeAbbr;
+        const awayName = away.team?.displayName ?? awayAbbr;
+        const homeScore = home.score ?? '';
+        const awayScore = away.score ?? '';
+
+        if (completed_flag) {
+          completed.push({ home: homeName, away: awayName, score: `${homeScore}–${awayScore}` });
+        }
+
+        let scoreHtml, statusClass, statusLabel;
+        if (state === 'post') {
+          scoreHtml = `<span class="score-final">${homeScore} – ${awayScore}</span>`;
+          statusClass = 'status-post'; statusLabel = 'Päättynyt';
+        } else if (state === 'in') {
+          scoreHtml = `<span class="score-live">${homeScore} – ${awayScore}</span>`;
+          statusClass = 'status-in'; statusLabel = detail || 'LIVE';
+        } else {
+          scoreHtml = `<span class="score-upcoming">–</span>`;
+          statusClass = 'status-pre'; statusLabel = formatKickoff(event.date);
+        }
+
+        const row = document.createElement('div');
+        row.className = 'match-row';
+        row.innerHTML = `
+          <div class="match-time">${state === 'pre' ? formatKickoff(event.date) : (state === 'in' ? '🔴' : '✓')}</div>
+          <div class="match-team home">
+            <span class="team-flag">${teamFlag(homeAbbr)}</span>
+            <span class="team-name">${esc(homeName)}</span>
+          </div>
+          <div class="match-score">${scoreHtml}</div>
+          <div class="match-team away">
+            <span class="team-flag">${teamFlag(awayAbbr)}</span>
+            <span class="team-name">${esc(awayName)}</span>
+          </div>
+          <div class="match-status-badge ${statusClass}">${esc(statusLabel)}</div>
+        `;
+        group.appendChild(row);
+      });
+
+      list.appendChild(group);
+    });
+
+    // pending banner: show completed matches from yesterday/today
+    const recentCompleted = eventsByDay.slice(0, 2).flat()
+      .filter(e => e?.status?.type?.completed);
+
+    if (recentCompleted.length > 0) {
+      const tags = document.getElementById('pendingMatches');
+      tags.innerHTML = recentCompleted.map(e => {
+        const comp = e.competitions?.[0];
+        const home = comp?.competitors?.find(c => c.homeAway === 'home');
+        const away = comp?.competitors?.find(c => c.homeAway === 'away');
+        const hs = home?.score ?? '', as = away?.score ?? '';
+        const hn = home?.team?.displayName ?? '', an = away?.team?.displayName ?? '';
+        const hf = teamFlag(home?.team?.abbreviation ?? '');
+        const af = teamFlag(away?.team?.abbreviation ?? '');
+        return `<span class="pending-match-tag">${hf} ${esc(hn)} ${hs}–${as} ${esc(an)} ${af}</span>`;
+      }).join('');
+
+      if (!pendingDismissed) {
+        document.getElementById('pendingBanner').classList.add('visible');
+      }
+    } else {
+      document.getElementById('pendingBanner').classList.remove('visible');
+    }
+  }
+
+  async function loadMatches() {
+    try {
+      const offsets = [-1, 0, 1, 2];
+      const responses = await Promise.all(
+        offsets.map(o =>
+          fetch(`${ESPN_BASE}?dates=${dateStr(o)}&t=${Date.now()}`)
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+        )
+      );
+      const eventsByDay = responses.map(r => r?.events ?? []);
+      renderMatches(eventsByDay);
+    } catch {
+      document.getElementById('matchesList').innerHTML =
+        '<div class="matches-loading">Otteluiden lataus epäonnistui</div>';
+    }
+  }
+
+  // ── PENDING DISMISS ─────────────────────────────────────────────
+
+  let pendingDismissed = false;
+  function dismissPending() {
+    pendingDismissed = true;
+    document.getElementById('pendingBanner').classList.remove('visible');
+  }
+
+  // ── LOADING STATE ───────────────────────────────────────────────
 
   function setLoading(on) {
     const btn = document.getElementById('refreshBtn');
@@ -482,35 +761,67 @@
 
   function showError(msg) {
     const el = document.getElementById('errorBanner');
-    el.textContent = msg;
-    el.classList.add('visible');
+    el.textContent = msg; el.classList.add('visible');
   }
 
   function clearError() {
     document.getElementById('errorBanner').classList.remove('visible');
   }
 
-  async function loadData() {
-    setLoading(true);
-    clearError();
+  // ── STANDINGS LOAD ──────────────────────────────────────────────
+
+  async function loadStandings() {
     try {
       const res = await fetch(CSV_URL + '&t=' + Date.now());
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
       const data = parseCSV(text);
       if (!data) throw new Error('CSV-jäsennys epäonnistui');
-      render(data);
+      renderStandings(data);
       document.getElementById('lastUpdated').textContent =
         'Päivitetty: ' + new Date().toLocaleString('fi-FI');
     } catch (e) {
-      showError('Tietojen lataus epäonnistui: ' + e.message);
+      showError('Tulostaulukon lataus epäonnistui: ' + e.message);
       document.getElementById('subtitle').textContent = 'Virhe tietojen latauksessa';
-    } finally {
-      setLoading(false);
     }
   }
 
-  loadData();
+  // ── REFRESH ALL ─────────────────────────────────────────────────
+
+  async function refreshAll() {
+    setLoading(true);
+    clearError();
+    pendingDismissed = false;
+    await Promise.all([loadStandings(), loadMatches()]);
+    setLoading(false);
+    resetCountdown();
+  }
+
+  // ── AUTO-REFRESH COUNTDOWN ──────────────────────────────────────
+
+  let countdownSec = REFRESH_MS / 1000;
+  let countdownTimer;
+
+  function resetCountdown() {
+    countdownSec = REFRESH_MS / 1000;
+  }
+
+  function tickCountdown() {
+    countdownSec--;
+    if (countdownSec <= 0) {
+      refreshAll();
+    } else {
+      const m = Math.floor(countdownSec / 60);
+      const s = countdownSec % 60;
+      document.getElementById('nextRefresh').textContent =
+        `Seuraava päivitys: ${m}:${String(s).padStart(2,'0')}`;
+    }
+  }
+
+  // ── INIT ────────────────────────────────────────────────────────
+
+  refreshAll();
+  countdownTimer = setInterval(tickCountdown, 1000);
 </script>
 </body>
 </html>
