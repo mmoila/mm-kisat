@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +9,14 @@
       --gold: #FFD700;
       --silver: #C0C0C0;
       --bronze: #CD7F32;
-      --bg: #0f1117;
-      --card: #1a1d27;
-      --border: #2a2d3a;
+      --bg: #07090f;
+      --card: #0f1520;
+      --border: #1e2a3a;
       --text: #e8eaf0;
       --muted: #6b7280;
-      --accent: #3b82f6;
+      --red: #e63946;
+      --blue: #1d6fce;
+      --accent: #1d6fce;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,53 +28,134 @@
       min-height: 100vh;
     }
 
+    /* ── HEADER ── */
     header {
-      background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 24px 32px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a0f1e 0%, #0d1628 60%, #0a0f1e 100%);
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, var(--red), var(--blue), var(--red)) 1;
+      padding: 0;
+    }
+
+    /* diagonal stripe accents */
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          -55deg,
+          transparent,
+          transparent 40px,
+          rgba(255,255,255,0.015) 40px,
+          rgba(255,255,255,0.015) 41px
+        );
+      pointer-events: none;
+    }
+
+    .header-inner {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 22px 32px;
+      gap: 20px;
       flex-wrap: wrap;
-      gap: 16px;
     }
 
-    .header-left h1 {
-      font-size: 1.8rem;
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .header-eyebrow {
+      font-size: 0.7rem;
       font-weight: 700;
-      background: linear-gradient(90deg, #60a5fa, #34d399);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .header-title {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      background: linear-gradient(90deg, #ffffff 0%, #c8d8f0 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .header-left p {
+    .header-sub {
+      font-size: 0.82rem;
       color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 4px;
+      margin-top: 2px;
+    }
+
+    /* kick scene */
+    .header-kick {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .kick-player {
+      font-size: 3.2rem;
+      display: block;
+      transform: scaleX(1); /* already faces right */
+      filter: drop-shadow(0 0 12px rgba(230,57,70,0.5));
+    }
+
+    .kick-ball {
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 6px;
+      margin-left: -2px;
+      animation: ballroll 2.5s ease-in-out infinite;
+    }
+
+    @keyframes ballroll {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-4px) rotate(20deg); }
+    }
+
+    /* right side of header */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
 
     .refresh-btn {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--red), #c1121f);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 11px 22px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background 0.2s, opacity 0.2s;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: opacity 0.2s, transform 0.1s;
       display: flex;
       align-items: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
-    .refresh-btn:hover { background: #2563eb; }
-    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .refresh-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .refresh-btn:active { transform: translateY(0); }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
     .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.35);
       border-top-color: white;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
@@ -83,27 +166,30 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── ERROR ── */
     .error-banner {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
+      background: rgba(230,57,70,0.12);
+      border-bottom: 1px solid rgba(230,57,70,0.3);
       color: #fca5a5;
-      padding: 12px 20px;
-      font-size: 0.85rem;
+      padding: 10px 20px;
+      font-size: 0.83rem;
       text-align: center;
       display: none;
     }
 
     .error-banner.visible { display: block; }
 
+    /* ── MAIN ── */
     main {
       max-width: 1200px;
       margin: 0 auto;
       padding: 32px 20px;
     }
 
+    /* ── PODIUM ── */
     .podium {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       margin-bottom: 32px;
       justify-content: center;
       flex-wrap: wrap;
@@ -112,12 +198,12 @@
     .podium-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 28px;
+      border-radius: 12px;
+      padding: 22px 28px;
       text-align: center;
-      min-width: 160px;
+      min-width: 150px;
       flex: 1;
-      max-width: 220px;
+      max-width: 210px;
       position: relative;
       overflow: hidden;
     }
@@ -129,28 +215,46 @@
       height: 3px;
     }
 
-    .podium-card.rank-1::before { background: var(--gold); }
-    .podium-card.rank-2::before { background: var(--silver); }
-    .podium-card.rank-3::before { background: var(--bronze); }
+    .podium-card.rank-1::before { background: linear-gradient(90deg, #b8860b, var(--gold), #b8860b); }
+    .podium-card.rank-2::before { background: linear-gradient(90deg, #888, var(--silver), #888); }
+    .podium-card.rank-3::before { background: linear-gradient(90deg, #7c5018, var(--bronze), #7c5018); }
 
-    .podium-medal { font-size: 1.8rem; margin-bottom: 8px; }
-    .podium-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .podium-points { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
-    .podium-points-label { font-size: 0.75rem; color: var(--muted); }
-    .podium-rank { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .podium-card.rank-1 { border-color: rgba(255,215,0,0.2); }
+    .podium-card.rank-2 { border-color: rgba(192,192,192,0.15); }
+    .podium-card.rank-3 { border-color: rgba(205,127,50,0.15); }
 
+    .podium-medal { font-size: 1.9rem; margin-bottom: 8px; }
+    .podium-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+
+    .podium-points {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .podium-card.rank-1 .podium-points { color: var(--gold); }
+    .podium-card.rank-2 .podium-points { color: var(--silver); }
+    .podium-card.rank-3 .podium-points { color: var(--bronze); }
+
+    .podium-points-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .podium-rank { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+
+    /* ── TABLE ── */
     .table-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 12px;
       overflow: hidden;
     }
 
     .table-header {
-      padding: 18px 24px;
+      padding: 16px 24px;
       border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 1rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
 
     .table-wrap { overflow-x: auto; }
@@ -158,13 +262,13 @@
     table { width: 100%; border-collapse: collapse; }
 
     thead th {
-      background: rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.02);
       color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 12px 16px;
+      letter-spacing: 0.07em;
+      padding: 11px 16px;
       text-align: right;
       white-space: nowrap;
       border-bottom: 1px solid var(--border);
@@ -176,16 +280,21 @@
 
     tbody tr {
       border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
+      transition: background 0.12s;
     }
 
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.03); }
-    tbody tr.empty-slot { opacity: 0.3; }
+    tbody tr:hover { background: rgba(255,255,255,0.025); }
+    tbody tr.empty-slot { opacity: 0.25; }
+
+    /* red left-border for top 3 */
+    tbody tr.rank-1 td:first-child { border-left: 3px solid var(--gold); }
+    tbody tr.rank-2 td:first-child { border-left: 3px solid var(--silver); }
+    tbody tr.rank-3 td:first-child { border-left: 3px solid var(--bronze); }
 
     td {
-      padding: 14px 16px;
-      font-size: 0.9rem;
+      padding: 13px 16px;
+      font-size: 0.88rem;
       text-align: right;
       white-space: nowrap;
     }
@@ -198,46 +307,56 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px; height: 28px;
+      width: 26px; height: 26px;
       border-radius: 50%;
-      font-size: 0.8rem;
-      font-weight: 700;
+      font-size: 0.78rem;
+      font-weight: 800;
     }
 
-    .rank-1 .rank-badge { background: rgba(255,215,0,0.15); color: var(--gold); }
-    .rank-2 .rank-badge { background: rgba(192,192,192,0.15); color: var(--silver); }
-    .rank-3 .rank-badge { background: rgba(205,127,50,0.15); color: var(--bronze); }
+    .rank-1 .rank-badge { background: rgba(255,215,0,0.12); color: var(--gold); }
+    .rank-2 .rank-badge { background: rgba(192,192,192,0.12); color: var(--silver); }
+    .rank-3 .rank-badge { background: rgba(205,127,50,0.12); color: var(--bronze); }
 
     .name-cell { font-weight: 600; }
-    .total-cell { font-weight: 700; color: var(--accent); }
-    .zero { color: var(--muted); }
+    .total-cell { font-weight: 800; color: #60a5fa; }
+    .zero { color: #2d3748; }
 
     .last-updated {
       text-align: right;
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 16px;
+      font-size: 0.76rem;
+      color: #374151;
+      margin-top: 14px;
     }
 
     @media (max-width: 600px) {
-      header { padding: 16px; }
-      .header-left h1 { font-size: 1.3rem; }
+      .header-inner { padding: 16px; }
+      .header-title { font-size: 1.4rem; }
+      .kick-player { font-size: 2.2rem; }
       main { padding: 16px 12px; }
-      .podium-card { min-width: 120px; padding: 16px; }
+      .podium-card { min-width: 110px; padding: 14px; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-left">
-    <h1>🏃 MM-Kisat Tulostaulukko ⚽</h1>
-    <p id="subtitle">Ladataan...</p>
+  <div class="header-inner">
+    <div class="header-left">
+      <span class="header-eyebrow">FIFA World Cup 2026</span>
+      <span class="header-title">MM-Kisat Tulostaulukko</span>
+      <span class="header-sub" id="subtitle">Ladataan...</span>
+    </div>
+    <div class="header-right">
+      <div class="header-kick">
+        <span class="kick-player">🏃</span>
+        <span class="kick-ball">⚽</span>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+        <span class="spinner" id="spinner"></span>
+        Päivitä
+      </button>
+    </div>
   </div>
-  <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
-    <span class="spinner" id="spinner"></span>
-    Päivitä
-  </button>
 </header>
 
 <div class="error-banner" id="errorBanner"></div>
@@ -304,7 +423,7 @@
   function render(data) {
     const { headers, rows } = data;
     const activeRows = rows.filter(r => r['Name'] && r['Name'] !== 'X' && r['Name'] !== '');
-    const emptyRows = rows.filter(r => !r['Name'] || r['Name'] === 'X' || r['Name'] === '');
+    const emptyRows  = rows.filter(r => !r['Name'] || r['Name'] === 'X' || r['Name'] === '');
 
     const sorted = [...activeRows].sort((a, b) => {
       const ra = parseInt(a['Rank']) || 99;
@@ -344,16 +463,15 @@
       tr.className = (isEmpty ? 'empty-slot ' : '') + (rank <= 3 ? `rank-${rank}` : '');
       tr.innerHTML = showHeaders.map(h => {
         const val = row[h] ?? '';
-        if (h === 'Rank') return `<td><span class="rank-badge">${esc(val)}</span></td>`;
-        if (h === 'Name') return `<td class="name-cell">${esc(val)}</td>`;
+        if (h === 'Rank')  return `<td><span class="rank-badge">${esc(val)}</span></td>`;
+        if (h === 'Name')  return `<td class="name-cell">${esc(val)}</td>`;
         if (h === 'Total') return `<td class="total-cell">${esc(val)}</td>`;
         return `<td class="${toNum(val) === 0 ? 'zero' : ''}">${esc(val)}</td>`;
       }).join('');
       tbody.appendChild(tr);
     });
 
-    const named = activeRows.length;
-    document.getElementById('subtitle').textContent = `${named} osallistujaa`;
+    document.getElementById('subtitle').textContent = `${activeRows.length} osallistujaa`;
   }
 
   function setLoading(on) {
@@ -380,12 +498,12 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
       const data = parseCSV(text);
-      if (!data) throw new Error('Could not parse CSV');
+      if (!data) throw new Error('CSV-jäsennys epäonnistui');
       render(data);
       document.getElementById('lastUpdated').textContent =
         'Päivitetty: ' + new Date().toLocaleString('fi-FI');
     } catch (e) {
-      showError('Tietojen lataus Google Sheetsistä epäonnistui: ' + e.message + '. Varmista että taulukko on julkaistu.');
+      showError('Tietojen lataus epäonnistui: ' + e.message);
       document.getElementById('subtitle').textContent = 'Virhe tietojen latauksessa';
     } finally {
       setLoading(false);
