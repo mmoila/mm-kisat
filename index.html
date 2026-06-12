@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MM-Kisat Leaderboard</title>
+  <title>MM-Kisat Tulostaulukko</title>
   <style>
     :root {
       --gold: #FFD700;
@@ -15,7 +15,6 @@
       --text: #e8eaf0;
       --muted: #6b7280;
       --accent: #3b82f6;
-      --green: #22c55e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,7 +52,7 @@
       margin-top: 4px;
     }
 
-    .update-btn {
+    .refresh-btn {
       background: var(--accent);
       color: white;
       border: none;
@@ -62,85 +61,39 @@
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 500;
-      transition: background 0.2s;
-    }
-
-    .update-btn:hover { background: #2563eb; }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      width: 100%;
-      max-width: 700px;
-    }
-
-    .modal h2 {
-      margin-bottom: 8px;
-      font-size: 1.2rem;
-    }
-
-    .modal p {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-
-    .modal textarea {
-      width: 100%;
-      height: 220px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: monospace;
-      font-size: 0.8rem;
-      padding: 12px;
-      resize: vertical;
-    }
-
-    .modal-actions {
+      transition: background 0.2s, opacity 0.2s;
       display: flex;
-      gap: 10px;
-      margin-top: 14px;
-      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
     }
 
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 9px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
+    .refresh-btn:hover { background: #2563eb; }
+    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      border: none;
-      color: white;
-      padding: 9px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
+    .loading .spinner { display: block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-banner {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
     }
+
+    .error-banner.visible { display: block; }
 
     main {
       max-width: 1200px;
@@ -180,33 +133,11 @@
     .podium-card.rank-2::before { background: var(--silver); }
     .podium-card.rank-3::before { background: var(--bronze); }
 
-    .podium-medal {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-    }
-
-    .podium-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .podium-points {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
-    .podium-points-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .podium-rank {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+    .podium-medal { font-size: 1.8rem; margin-bottom: 8px; }
+    .podium-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .podium-points { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+    .podium-points-label { font-size: 0.75rem; color: var(--muted); }
+    .podium-rank { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
     .table-card {
       background: var(--card);
@@ -222,14 +153,9 @@
       font-size: 1rem;
     }
 
-    .table-wrap {
-      overflow-x: auto;
-    }
+    .table-wrap { overflow-x: auto; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
     thead th {
       background: rgba(255,255,255,0.03);
@@ -255,7 +181,6 @@
 
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: rgba(255,255,255,0.03); }
-
     tbody tr.empty-slot { opacity: 0.3; }
 
     td {
@@ -273,8 +198,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       font-size: 0.8rem;
       font-weight: 700;
@@ -284,15 +208,8 @@
     .rank-2 .rank-badge { background: rgba(192,192,192,0.15); color: var(--silver); }
     .rank-3 .rank-badge { background: rgba(205,127,50,0.15); color: var(--bronze); }
 
-    .name-cell {
-      font-weight: 600;
-    }
-
-    .total-cell {
-      font-weight: 700;
-      color: var(--accent);
-    }
-
+    .name-cell { font-weight: 600; }
+    .total-cell { font-weight: 700; color: var(--accent); }
     .zero { color: var(--muted); }
 
     .last-updated {
@@ -314,33 +231,23 @@
 
 <header>
   <div class="header-left">
-    <h1>MM-Kisat Leaderboard</h1>
-    <p id="subtitle">Live standings</p>
+    <h1>🏃 MM-Kisat Tulostaulukko ⚽</h1>
+    <p id="subtitle">Ladataan...</p>
   </div>
-  <button class="update-btn" onclick="openModal()">Update Data</button>
+  <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+    <span class="spinner" id="spinner"></span>
+    Päivitä
+  </button>
 </header>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h2>Update Standings</h2>
-    <p>
-      Paste your tab-separated data below (copy directly from Excel/Google Sheets).<br>
-      The first row should be the header row. Data is saved in your browser.
-    </p>
-    <textarea id="pasteArea" placeholder="Sheet&#9;Name&#9;Rank&#9;Total&#9;...&#10;PARTICIPANT A&#9;Mallikarjun&#9;7&#9;5,42&#9;..."></textarea>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="applyData()">Apply &amp; Save</button>
-    </div>
-  </div>
-</div>
+<div class="error-banner" id="errorBanner"></div>
 
 <main>
   <div class="podium" id="podium"></div>
   <div class="table-card">
-    <div class="table-header">All Participants</div>
+    <div class="table-header">Kaikki osallistujat</div>
     <div class="table-wrap">
-      <table id="leaderTable">
+      <table>
         <thead id="tableHead"></thead>
         <tbody id="tableBody"></tbody>
       </table>
@@ -350,42 +257,34 @@
 </main>
 
 <script>
-  const DEFAULT_DATA = `Sheet\tName\tRank\tTotal\t1X2\tResults\tRound of 32\tRound of 16\tQuarterfinals\tSemifinals\tFinal\tChampion\tGoalscorers\tBookings\tReferee
-PARTICIPANT A\tMallikarjun\t7\t5,42\t1,42\t4\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT B\tSamuli\t3\t7,42\t1,42\t6\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT C\tSimo\t1\t10,12\t4,12\t6\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT D\tJouko The Champ\t7\t5,42\t1,42\t4\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT E\tAleksi\t7\t5,42\t1,42\t4\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT F\tOtso\t6\t6,12\t4,12\t2\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT G\tMikael\t3\t7,42\t1,42\t6\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT H\tPete\t1\t10,12\t4,12\t6\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT I\tPekka\t3\t7,42\t1,42\t6\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT J\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT K\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT L\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT M\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT N\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT O\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT P\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT Q\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT R\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT S\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT T\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT U\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT V\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT W\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT X\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT Y\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0
-PARTICIPANT Z\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0`;
-
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRM37jNS4oQUGxxYaXiAMJcKxVI0x6O-iDIL4_SBkmoNIIbFKIaVVCWqB6pvvrXrU3vhvaIfKD7JW5V/pub?gid=0&single=true&output=csv';
   const MEDALS = ['🥇', '🥈', '🥉'];
 
-  function parseData(raw) {
-    const lines = raw.trim().split('\n').filter(l => l.trim());
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
     if (lines.length < 2) return null;
-    const headers = lines[0].split('\t').map(h => h.trim());
+
+    function splitRow(line) {
+      const cells = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if (ch === ',' && !inQ) {
+          cells.push(cur.trim()); cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      cells.push(cur.trim());
+      return cells;
+    }
+
+    const headers = splitRow(lines[0]);
     const rows = lines.slice(1).map(line => {
-      const cells = line.split('\t').map(c => c.trim());
+      const cells = splitRow(line);
       const obj = {};
       headers.forEach((h, i) => obj[h] = cells[i] ?? '');
       return obj;
@@ -395,13 +294,18 @@ PARTICIPANT Z\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0`;
 
   function toNum(val) {
     if (!val || val === '0') return 0;
-    return parseFloat(val.replace(',', '.')) || 0;
+    return parseFloat(String(val).replace(',', '.')) || 0;
+  }
+
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function render(data) {
     const { headers, rows } = data;
-    const activeRows = rows.filter(r => r['Name'] && r['Name'] !== 'X');
-    const emptyRows = rows.filter(r => !r['Name'] || r['Name'] === 'X');
+    const activeRows = rows.filter(r => r['Name'] && r['Name'] !== 'X' && r['Name'] !== '');
+    const emptyRows = rows.filter(r => !r['Name'] || r['Name'] === 'X' || r['Name'] === '');
+
     const sorted = [...activeRows].sort((a, b) => {
       const ra = parseInt(a['Rank']) || 99;
       const rb = parseInt(b['Rank']) || 99;
@@ -409,29 +313,10 @@ PARTICIPANT Z\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0`;
       return toNum(b['Total']) - toNum(a['Total']);
     });
 
-    // Podium (top 3 unique ranks)
+    // Podium
     const podium = document.getElementById('podium');
     podium.innerHTML = '';
-    const top3 = sorted.filter(r => parseInt(r['Rank']) <= 3);
-    const seen = new Set();
-    const podiumItems = [];
-    for (const r of top3) {
-      const rank = parseInt(r['Rank']);
-      if (!seen.has(rank) && podiumItems.length < 3) {
-        // Find all with same rank
-        const group = top3.filter(x => parseInt(x['Rank']) === rank);
-        if (group.length === 1) {
-          podiumItems.push({ rank, row: r, tied: false });
-          seen.add(rank);
-        } else {
-          podiumItems.push({ rank, row: null, group, tied: true });
-          seen.add(rank);
-        }
-      }
-    }
-    // Simpler: just show top 3 rows
-    const podiumRows = sorted.slice(0, Math.min(3, sorted.length));
-    podiumRows.forEach((row, i) => {
+    sorted.slice(0, 3).forEach((row, i) => {
       const rank = parseInt(row['Rank']);
       const card = document.createElement('div');
       card.className = `podium-card rank-${rank <= 3 ? rank : i+1}`;
@@ -439,92 +324,75 @@ PARTICIPANT Z\tX\t10\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0`;
         <div class="podium-medal">${MEDALS[i] || ''}</div>
         <div class="podium-name">${esc(row['Name'])}</div>
         <div class="podium-points">${row['Total'] || '0'}</div>
-        <div class="podium-points-label">points</div>
-        <div class="podium-rank">Rank #${row['Rank']}</div>
+        <div class="podium-points-label">pistettä</div>
+        <div class="podium-rank">Sija #${row['Rank']}</div>
       `;
       podium.appendChild(card);
     });
 
-    // Table headers (skip "Sheet" column, show from Name onwards)
-    const showHeaders = headers.filter(h => h !== 'Sheet');
-    const thead = document.getElementById('tableHead');
-    thead.innerHTML = '<tr>' + showHeaders.map(h => `<th>${esc(h)}</th>`).join('') + '</tr>';
+    // Table
+    const showHeaders = headers.filter(h => h !== 'Sheet' && h !== '');
+    document.getElementById('tableHead').innerHTML =
+      '<tr>' + showHeaders.map(h => `<th>${esc(h)}</th>`).join('') + '</tr>';
 
-    // Table body
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
-    const allRows = [...sorted, ...emptyRows];
-    allRows.forEach(row => {
+    [...sorted, ...emptyRows].forEach(row => {
       const rank = parseInt(row['Rank']) || 99;
-      const isEmpty = !row['Name'] || row['Name'] === 'X';
+      const isEmpty = !row['Name'] || row['Name'] === 'X' || row['Name'] === '';
       const tr = document.createElement('tr');
       tr.className = (isEmpty ? 'empty-slot ' : '') + (rank <= 3 ? `rank-${rank}` : '');
-      const cells = showHeaders.map(h => {
+      tr.innerHTML = showHeaders.map(h => {
         const val = row[h] ?? '';
         if (h === 'Rank') return `<td><span class="rank-badge">${esc(val)}</span></td>`;
         if (h === 'Name') return `<td class="name-cell">${esc(val)}</td>`;
         if (h === 'Total') return `<td class="total-cell">${esc(val)}</td>`;
-        const num = toNum(val);
-        return `<td class="${num === 0 ? 'zero' : ''}">${esc(val)}</td>`;
-      });
-      tr.innerHTML = cells.join('');
+        return `<td class="${toNum(val) === 0 ? 'zero' : ''}">${esc(val)}</td>`;
+      }).join('');
       tbody.appendChild(tr);
     });
 
-    // Subtitle
     const named = activeRows.length;
-    document.getElementById('subtitle').textContent = `${named} active participant${named !== 1 ? 's' : ''}`;
+    document.getElementById('subtitle').textContent = `${named} osallistujaa`;
   }
 
-  function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function setLoading(on) {
+    const btn = document.getElementById('refreshBtn');
+    btn.disabled = on;
+    btn.classList.toggle('loading', on);
   }
 
-  function openModal() {
-    const saved = localStorage.getItem('mm_kisat_raw') || DEFAULT_DATA;
-    document.getElementById('pasteArea').value = saved;
-    document.getElementById('modalOverlay').classList.add('open');
+  function showError(msg) {
+    const el = document.getElementById('errorBanner');
+    el.textContent = msg;
+    el.classList.add('visible');
   }
 
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
+  function clearError() {
+    document.getElementById('errorBanner').classList.remove('visible');
   }
 
-  function applyData() {
-    const raw = document.getElementById('pasteArea').value.trim();
-    const data = parseData(raw);
-    if (!data) { alert('Could not parse data. Make sure it is tab-separated with a header row.'); return; }
-    localStorage.setItem('mm_kisat_raw', raw);
-    localStorage.setItem('mm_kisat_updated', new Date().toISOString());
-    render(data);
-    updateTimestamp();
-    closeModal();
-  }
-
-  function updateTimestamp() {
-    const ts = localStorage.getItem('mm_kisat_updated');
-    const el = document.getElementById('lastUpdated');
-    if (ts) {
-      const d = new Date(ts);
-      el.textContent = 'Last updated: ' + d.toLocaleString();
-    } else {
-      el.textContent = 'Showing default data — click "Update Data" to paste your latest standings.';
+  async function loadData() {
+    setLoading(true);
+    clearError();
+    try {
+      const res = await fetch(CSV_URL + '&t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const data = parseCSV(text);
+      if (!data) throw new Error('Could not parse CSV');
+      render(data);
+      document.getElementById('lastUpdated').textContent =
+        'Päivitetty: ' + new Date().toLocaleString('fi-FI');
+    } catch (e) {
+      showError('Tietojen lataus Google Sheetsistä epäonnistui: ' + e.message + '. Varmista että taulukko on julkaistu.');
+      document.getElementById('subtitle').textContent = 'Virhe tietojen latauksessa';
+    } finally {
+      setLoading(false);
     }
   }
 
-  function init() {
-    const saved = localStorage.getItem('mm_kisat_raw');
-    const raw = saved || DEFAULT_DATA;
-    const data = parseData(raw);
-    if (data) render(data);
-    updateTimestamp();
-  }
-
-  document.getElementById('modalOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-
-  init();
+  loadData();
 </script>
 </body>
 </html>
